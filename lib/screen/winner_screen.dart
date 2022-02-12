@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './point_splitter_screen.dart';
 import '../models/pool.dart';
 import '../models/attendee.dart';
 
@@ -25,45 +26,53 @@ class _WinnerScreenState extends State<WinnerScreen> {
     int numberOfWinners = widget.pool.winners.length;
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Gagnants'),
-        ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Text('Choix des gagnants ($numberOfWinners) et du répartiteur parmis $numberOfAttendees'),
+      appBar: AppBar(
+        title: const Text('Gagnants'),
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: Row(
+              children: <Widget>[
+                Text('Choix des gagnants ($numberOfWinners) et du répartiteur parmis $numberOfAttendees'),
+                const Spacer(),
+                widget.pool.distributor != null && widget.pool.winners.isNotEmpty ? ElevatedButton(
+                  onPressed: () => _onNextScreen(context),
+                  child: const Text('Valider')
+                ) : SizedBox.shrink(),
+              ],
             ),
-            Padding(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: _listWinnerAndDistributorWidget(
+              pool: widget.pool,
+              onRemoveDistributor: _onRemoveDistributor,
+              onRemoveWinner: _onRemoveWinner,
+              onWinnerMove: _onWinnerMove,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: _filterWidget(onFilterChange: _onFilterChange),
+          ),
+          // filter for list
+          Expanded(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Expanded(
-                child: _listWinnerAndDistributorWidget(
-                  pool: widget.pool,
-                  onRemoveDistributor: _onRemoveDistributor,
-                  onRemoveWinner: _onRemoveWinner,
-                  onWinnerMove: _onWinnerMove,
-                ),
+              child: _listAttendeeWidget(
+                attendees: filteredAttendees,
+                onDefineDistributor: _onDefineDistributor,
+                onDefineWinner: _onDefineWinner,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: _filterWidget(onFilterChange: _onFilterChange),
-            ),
-            // filter for list
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Expanded(
-                child: _listAttendeeWidget(
-                  attendees: filteredAttendees,
-                  onDefineDistributor: _onDefineDistributor,
-                  onDefineWinner: _onDefineWinner,
-                ),
-              ),
-            ),
-          ],
-        ));
+          ),
+        ],
+      )
+    );
   }
 
   void _onDefineDistributor(String distributorName) {
@@ -142,6 +151,15 @@ class _WinnerScreenState extends State<WinnerScreen> {
       }
     });
   }
+
+  void _onNextScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PointSplitterScreen(pool: widget.pool),
+      ),
+    );
+  }
 }
 
 class _listWinnerAndDistributorWidget extends StatelessWidget {
@@ -173,6 +191,7 @@ class _listWinnerAndDistributorWidget extends StatelessWidget {
 
     if (pool.distributor != null) {
       showList.add(ListTile(
+        tileColor: Colors.black12,
         title: Text(pool.distributor!.name + ' ' + pool.distributor!.value.toString() + ' PFs' + ' (Distributeur)'),
         leading: const Icon(Icons.person_outline_rounded),
         trailing: Row(
@@ -192,6 +211,7 @@ class _listWinnerAndDistributorWidget extends StatelessWidget {
     for (var attendee in pool.winners) {
       winner++;
       showList.add(ListTile(
+        tileColor: Colors.black12,
         title: Row(
           children: [
             Text(winner.toString() + '.' + attendee.name + ' ' +  attendee.value.toString() + ' PFs'),

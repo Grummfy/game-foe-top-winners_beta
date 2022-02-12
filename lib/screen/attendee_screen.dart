@@ -40,7 +40,7 @@ class _AttendeeScreenState extends State<AttendeeScreen> {
     Pool pool = Pool();
     pool.attendees = { for (var attendee in items) attendee.name : attendee };
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => WinnerScreen(pool: pool),
