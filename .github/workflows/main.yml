@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Flutter CI
 
 on:
   push:
@@ -10,10 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-#    strategy:
-#      matrix:
-#        node-version: [16.x]
 
     steps:
       - name: Checkout
@@ -28,7 +24,7 @@ jobs:
           cache-path: ${{ runner.tool_cache }}/flutter
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter build web
+      - run: flutter build web --base-href '/${{ github.event.repository.name }}/'
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
