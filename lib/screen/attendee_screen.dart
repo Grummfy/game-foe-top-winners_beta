@@ -173,7 +173,7 @@ class _AttendeeScreenState extends State<AttendeeScreen> {
                     onPressed: () {
                       // fill textarea with debug text
                       setState(() {
-                        attendeeTxtValue = "blabla foo bar lorem ipsum : HBHJQJBQBHB\n\nQuietus 100\nHonorius   40\nD.Willy 40 (auto)\nLilliann 100   	(auto)\nCirius 40\nBidule's 456 : 40\nBob :10\nJijy : 80(auto)\n\nLaure 50\nElemental 100\nKarelcote 40\nFoo 40\nBar 40\n Euric 200 ( auto )\nmam's62 (30)\nTotal 730";
+                        attendeeTxtValue = "blabla foo bar lorem ipsum : HBHJQJBQBHB\n\nQuietus 100\nHonorius   40\nD.Willy 40 (auto)\nLilliann 100   	(auto)\nCirius 40\nBidule's 456 : 40\nBob :10\nJijy : 80(auto)\n\nLaure 50\nElemental 100\nKarelcote 40\nFoo 40\nBar 40\n Euric 200 ( auto )\nmam's62 (30)\nTotal 950";
                       });
                     },
                   ),

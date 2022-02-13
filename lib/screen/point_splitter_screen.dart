@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/attendee.dart';
 import '../models/pool.dart';
+import './messages.dart';
 
 class PointSplitterScreen extends StatefulWidget {
   Pool pool;
@@ -75,8 +76,6 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO add limit for the distributor
-
     // init all values if not already initialized
     if (_valuesForSplit.isEmpty) {
       _valuesForSplit = _splitValues();
@@ -113,24 +112,51 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
               return _buildListOfAttendees(winnerIndex);
             })
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => _changePointSplitterWidget(
-                valuesForSplit: _valuesForSplit,
-                onValueForSplitChanged: _onValueForSplitChanged,
-                total: widget.pool.total(),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.skip_next_outlined),
+                label: 'Valider',
               ),
-            ),
-            tooltip: 'Changer la réparition des gagnants',
-            child: const Icon(Icons.edit_outlined),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.edit_outlined),
+                label: 'Répartition',
+                tooltip: 'Changer la réparition des gagnants',
+              ),
+            ],
+            currentIndex: 0,
+            selectedItemColor: _isValid() ? Colors.lightGreen : Colors.redAccent,
+            onTap: _onBottomTap,
           ),
         );
       }),
     );
+  }
 
-    // TODO add next button
-    // next button will transmit pool + _splitterAttendees
+  void _onBottomTap(int index) {
+    if (index == 1) {
+      showDialog(
+        context: context,
+        builder: (context) => _changePointSplitterWidget(
+          valuesForSplit: _valuesForSplit,
+          onValueForSplitChanged: _onValueForSplitChanged,
+          total: widget.pool.total(),
+        ),
+      );
+    }
+
+    if (index == 0 && _isValid()) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessageScreen(
+            pool: widget.pool,
+            distributorParts: _distributorParts,
+            splitterAttendees: _splitterAttendees,
+          ),
+        ),
+      );
+    }
   }
 
   void _onValueForSplitChanged(List<double> valuesForSplit) {
@@ -247,6 +273,15 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
   int _sumOfDistributorStillAvailable() {
     int available = _distributorParts.reduce((int sum, int value) => sum + value);
     return widget.pool.distributor!.value - available;
+  }
+
+  bool _isValid() {
+    for (int index = 0; index < widget.pool.winners.length; index ++) {
+      if (_winnerTotals[ index ] != _distributionTotal[ index ]) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
