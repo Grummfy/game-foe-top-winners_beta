@@ -15,7 +15,7 @@ class Caladaan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bool debug = true;
+    const bool debug = false;
     if (!debug) {
       return MaterialApp(
         title: 'FoE Caladaan helper',
