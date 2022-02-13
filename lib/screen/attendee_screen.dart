@@ -307,9 +307,6 @@ class _AttendeeErrorDialogWidget extends StatelessWidget {
       inputFormatters: <TextInputFormatter>[
         FilteringTextInputFormatter.digitsOnly,
       ],
-      validator: (String? value) {
-        return (value != null && int.parse(value) > 0) ? 'Cela doit-être positif!' : null;
-      },
       onChanged: (String newValue) => value = int.parse(newValue)
     );
 

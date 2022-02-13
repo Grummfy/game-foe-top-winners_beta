@@ -201,14 +201,12 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,
+                      _maxDistributorValueTextInputFormatter(pointSplitterScreenState: this),
                     ],
-                    validator: (String? value) {
-                      return (value != null && int.parse(value) > 0) ? 'Cela doit-être positif!' : null;
-                    },
                     onChanged: (String newValue) => newValue.isNotEmpty ? onDistributorValueChanged(int.parse(newValue), winnerIndex) : {},
                   )
                 ),
-                Text(' / ' + widget.pool.distributor!.value.toString()),
+                Text(' / ' + _sumOfDistributorStillAvailable().toString() + ' (' + widget.pool.distributor!.value.toString() + ')'),
               ],
             )
         )
@@ -245,6 +243,11 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
         )
     );
   }
+
+  int _sumOfDistributorStillAvailable() {
+    int available = _distributorParts.reduce((int sum, int value) => sum + value);
+    return widget.pool.distributor!.value - available;
+  }
 }
 
 class _changePointSplitterWidget extends StatefulWidget {
@@ -276,9 +279,6 @@ class _changePointSplitterWidgetState extends State<_changePointSplitterWidget> 
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
           ],
-          validator: (String? value) {
-            return (value != null && int.parse(value) > 0) ? 'Cela doit-être positif!' : null;
-          },
           onChanged: (String newValue) => newValue.isNotEmpty ? setState(() => widget.valuesForSplit[ index ] = (int.parse(newValue) / 100) ) : {},
         )
       );
@@ -320,5 +320,33 @@ class _changePointSplitterWidgetState extends State<_changePointSplitterWidget> 
 
     // get back to main screen
     Navigator.pop(context);
+  }
+}
+
+class _maxDistributorValueTextInputFormatter extends TextInputFormatter {
+  _PointSplitterScreenState pointSplitterScreenState;
+
+  _maxDistributorValueTextInputFormatter({required this.pointSplitterScreenState});
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return TextEditingValue().copyWith(text: '0');
+    }
+
+    int someValue = int.parse(newValue.text);
+    int oldSomeValue = oldValue.text.isNotEmpty ? int.parse(oldValue.text) : 0;
+    if (someValue <= 0) {
+      return TextEditingValue().copyWith(text: '0');
+    }
+
+    // we need to add the old value to still available, because the function add this value to the sum...
+    int stillAvailable = pointSplitterScreenState._sumOfDistributorStillAvailable() + oldSomeValue;
+
+    if ((stillAvailable - someValue) < 0) {
+      return TextEditingValue().copyWith(text: '${stillAvailable}');
+    }
+
+    return newValue;
   }
 }
