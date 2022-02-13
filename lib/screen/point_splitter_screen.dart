@@ -75,6 +75,9 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO add limit for the distributor
+
+    // init all values if not already initialized
     if (_valuesForSplit.isEmpty) {
       _valuesForSplit = _splitValues();
       _splitterAttendees = _computeSplitterAttendees();
@@ -83,6 +86,7 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
       _computeTotalOfWinners();
     }
 
+    // create tabs header
     List<Tab> tabs = <Tab>[];
     int index = 1;
     for (var winner in widget.pool.winners) {
@@ -93,41 +97,40 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
       ));
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Séparation des points' + widget.pool.distributor!.value.toString()),
-        ),
-        body: DefaultTabController(
-          length: tabs.length,
-          child: Builder(builder: (BuildContext context) {
-            return Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  tabs: tabs,
-                  isScrollable: true,
-                ),
-              ),
-              body: TabBarView(
-                children: List<Widget>.generate(_splitterAttendees.length, (int winnerIndex) {
-                  return _buildListOfAttendees(winnerIndex);
-                })
-              ),
-            );
-          }),
-        ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (context) => _changePointSplitterWidget(
-            valuesForSplit: _valuesForSplit,
-            onValueForSplitChanged: _onValueForSplitChanged,
-            total: widget.pool.total(),
+    return DefaultTabController(
+      length: tabs.length,
+      child: Builder(builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Séparation des points'),
+            bottom: TabBar(
+              tabs: tabs,
+              isScrollable: true,
+            ),
           ),
-        ),
-        tooltip: 'Changer la réparition des gagnants',
-        child: const Icon(Icons.edit_outlined),
-      ),
+          body: TabBarView(
+            children: List<Widget>.generate(_splitterAttendees.length, (int winnerIndex) {
+              return _buildListOfAttendees(winnerIndex);
+            })
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => _changePointSplitterWidget(
+                valuesForSplit: _valuesForSplit,
+                onValueForSplitChanged: _onValueForSplitChanged,
+                total: widget.pool.total(),
+              ),
+            ),
+            tooltip: 'Changer la réparition des gagnants',
+            child: const Icon(Icons.edit_outlined),
+          ),
+        );
+      }),
     );
+
+    // TODO add next button
+    // next button will transmit pool + _splitterAttendees
   }
 
   void _onValueForSplitChanged(List<double> valuesForSplit) {
@@ -191,19 +194,21 @@ class _PointSplitterScreenState extends State<PointSplitterScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             child: Row(
               children: [
-                Expanded(child: TextFormField(
-                  decoration: InputDecoration(labelText: 'Part du distributeur'),
-                  initialValue: _distributorParts[ winnerIndex ].toString(),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  validator: (String? value) {
-                    return (value != null && int.parse(value) > 0) ? 'Cela doit-être positif!' : null;
-                  },
-                  onChanged: (String newValue) => newValue.isNotEmpty ? onDistributorValueChanged(int.parse(newValue), winnerIndex) : {},
-                )),
-                const Spacer(),
+                Expanded(
+                  child: TextFormField(
+                    decoration: InputDecoration(labelText: 'Part du distributeur'),
+                    initialValue: _distributorParts[ winnerIndex ].toString(),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    validator: (String? value) {
+                      return (value != null && int.parse(value) > 0) ? 'Cela doit-être positif!' : null;
+                    },
+                    onChanged: (String newValue) => newValue.isNotEmpty ? onDistributorValueChanged(int.parse(newValue), winnerIndex) : {},
+                  )
+                ),
+                Text(' / ' + widget.pool.distributor!.value.toString()),
               ],
             )
         )

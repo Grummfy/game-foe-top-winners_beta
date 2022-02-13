@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:game_foe_caladaan/models/attendee.dart';
+import 'package:game_foe_caladaan/screen/messages.dart';
 
 import 'models/pool.dart';
 import 'screen/attendee_screen.dart';
@@ -14,7 +15,14 @@ class Caladaan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*
+    const bool debug = true;
+    if (!debug) {
+      return MaterialApp(
+        title: 'FoE Caladaan helper',
+        home: AttendeeScreen(),
+      );
+    }
+
     Pool pool = Pool();
     List<Attendee> items = <Attendee>[];
     var rng = Random();
@@ -31,14 +39,47 @@ class Caladaan extends StatelessWidget {
     pool.winners.add(pool.attendees['player2']!);
     pool.winners.add(pool.attendees['player3']!);
     pool.distributor = pool.attendees['player5']!;
+
+    List<List<Attendee>> splitterAttendees = [
+      [pool.attendees['player4']!, pool.attendees['player10']!, pool.attendees['player11']!],
+      [pool.attendees['player6']!, pool.attendees['player9']!],
+      [pool.attendees['player7']!, pool.attendees['player8']!],
+    ];
+
+    List<int> distributorParts = [5, 15, 20];
+
+    // const String screen = 'winner';
+    const String screen = 'splitter';
+    // const String screen = 'message';
+
+    // winner screen
+    if (screen == ' ') {
+      return MaterialApp(
+        title: 'FoE Caladaan helper',
+        home: WinnerScreen(
+            pool: pool,
+        ), // AttendeeScreen(),
+      );
+    }
+
+    // splitter screen
+    if (screen == 'splitter') {
+      return MaterialApp(
+        title: 'FoE Caladaan helper',
+        home: PointSplitterScreen(
+            pool: pool,
+        ), // AttendeeScreen(),
+      );
+    }
+
+    // Message screen
     return MaterialApp(
       title: 'FoE Caladaan helper',
-      home: PointSplitterScreen(pool: pool), // AttendeeScreen(),
-    );
-*/
-    return MaterialApp(
-      title: 'FoE Caladaan helper',
-      home: AttendeeScreen(),
+      home: MessageScreen(
+          pool: pool,
+          splitterAttendees: splitterAttendees,
+          distributorParts: distributorParts
+      ), // AttendeeScreen(),
     );
   }
 }
