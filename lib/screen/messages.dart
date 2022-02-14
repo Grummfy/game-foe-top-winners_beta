@@ -241,7 +241,7 @@ class _MessageScreenState extends State<MessageScreen> {
             'Vous êtes 3ième la période 1, premier la période 2, ==> Vous ne toucherez pas de récompenses\n\n'
             'Tout redevient normal en période 3, vous pouvez de nouveau gagner la récompense\n\n\n'
             'Les membres du conseil de Calaadan renoncent à leur droit de gagner la cagnotte, merci à eux 😉.'
-            'Les membres du conseil sont Bobbie joe, Elemental, Christophe, Quiétus, Fred, Honorius, Euric et Fragmasterfrogs.\n'
+            'Les membres du conseil sont Bobbie joe, Elemental, Christophe, Quiétus, Fred, Honorius, Euric, Fragmasterfrogs, Elpoireau et Jguy.\n'
             'Cagnotte de la période du ${startOfNextPeriod.toLocal().toString().split(' ')[0]} au ${endOfNextPeriod.toLocal().toString().split(' ')[0]}'
             ' (cette semaine ${widget.pool.winners.fold('', (String v, Attendee e) => v.isEmpty ? e.name : (v + ', ' + e.name))}'
             ' ne sont pas éligibles aux gains mais rien ne vous empêche d\'être dans le top 3 quand même ;))'
